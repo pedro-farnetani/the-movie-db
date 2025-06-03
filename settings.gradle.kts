@@ -21,4 +21,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "The Movie DB"
 include(":app")
- 
+include(":core:designsystem")
