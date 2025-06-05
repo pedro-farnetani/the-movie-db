@@ -2,7 +2,6 @@ package com.tmdb.core.network.di
 
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
-import com.tmdb.core.network.BuildConfig
 import com.tmdb.core.network.interceptors.TokenInterceptor
 import dagger.Module
 import dagger.Provides
@@ -14,9 +13,11 @@ import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import javax.inject.Singleton
 
+private const val BASE_URL = "https://api.themoviedb.org"
+
 @Module
 @InstallIn(SingletonComponent::class)
-internal interface NetworkModule {
+internal object NetworkModule {
 
     @Provides
     @Singleton
@@ -46,7 +47,7 @@ internal interface NetworkModule {
         okHttpClient: OkHttpClient,
         moshi: Moshi
     ): Retrofit = Retrofit.Builder()
-        .baseUrl(BuildConfig.SERVER_ROUTE)
+        .baseUrl(BASE_URL)
         .addConverterFactory(MoshiConverterFactory.create(moshi))
         .client(okHttpClient)
         .build()
