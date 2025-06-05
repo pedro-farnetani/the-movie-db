@@ -3,6 +3,7 @@ package com.tmdb.core.network.di
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import com.tmdb.core.network.BuildConfig
+import com.tmdb.core.network.interceptors.TokenInterceptor
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -30,6 +31,7 @@ internal interface NetworkModule {
         httpLoggingInterceptor: HttpLoggingInterceptor
     ): OkHttpClient = OkHttpClient.Builder()
         .addInterceptor(httpLoggingInterceptor)
+        .addInterceptor(TokenInterceptor())
         .build()
 
     @Provides
