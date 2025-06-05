@@ -5,7 +5,7 @@ plugins {
 }
 
 android {
-    namespace = "com.tmdb.core.data.movie"
+    namespace = "com.tmdb.core.domain"
     compileSdk = 35
 
     defaultConfig {
@@ -23,18 +23,11 @@ android {
 
 dependencies {
 
-    // Core
-    implementation(project(":core:network"))
+    implementation(project(":core:data:data-movie"))
 
     // Hilt
     implementation(libs.hilt.android)
     kapt(libs.hilt.compiler)
-
-    // Retrofit
-    implementation(libs.retrofit.core)
-
-    // Moshi
-    implementation(libs.moshi.kotlin)
 
     // Test dependencies
     testImplementation(libs.test.junit)

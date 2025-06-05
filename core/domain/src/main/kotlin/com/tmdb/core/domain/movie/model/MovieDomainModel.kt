@@ -1,8 +1,8 @@
-package com.tmdb.core.data.movie.model
+package com.tmdb.core.domain.movie.model
 
-import com.tmdb.core.data.movie.api.model.MovieDto
+import com.tmdb.core.data.movie.model.MovieDataModel
 
-data class MovieDataModel(
+data class MovieDomainModel(
     val id: Long,
     val adult: Boolean,
     val backdropPath: String,
@@ -21,12 +21,12 @@ data class MovieDataModel(
     companion object
 }
 
-internal fun List<MovieDto>.toDataModelList(): List<MovieDataModel> {
-    return map { it.toDataModel() }
+internal fun List<MovieDataModel>.toDomainModelList(): List<MovieDomainModel> {
+    return map { it.toDomainModel() }
 }
 
-internal fun MovieDto.toDataModel(): MovieDataModel {
-    return MovieDataModel(
+internal fun MovieDataModel.toDomainModel(): MovieDomainModel {
+    return MovieDomainModel(
         id = id,
         adult = adult,
         backdropPath = backdropPath,
@@ -44,7 +44,7 @@ internal fun MovieDto.toDataModel(): MovieDataModel {
     )
 }
 
-fun MovieDataModel.Companion.mock(id: Long = 0) = MovieDataModel(
+internal fun MovieDomainModel.Companion.mock(id: Long = 0) = MovieDomainModel(
     id = id,
     adult = false,
     backdropPath = "",
