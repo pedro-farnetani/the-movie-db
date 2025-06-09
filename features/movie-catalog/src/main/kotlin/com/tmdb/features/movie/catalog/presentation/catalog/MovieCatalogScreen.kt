@@ -47,6 +47,8 @@ fun SharedTransitionScope.MovieCatalogScreen(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
+    val context = LocalContext.current
+
     val snackbarHostState = remember { SnackbarHostState() }
 
     Scaffold(
@@ -81,9 +83,17 @@ fun SharedTransitionScope.MovieCatalogScreen(
         }
     )
 
+    LaunchedEffect(uiState.isError) {
+        if (uiState.isError) {
+            snackbarHostState.showSnackbar(
+                message = context.getString(R.string.error_generic_message),
+                actionLabel = context.getString(R.string.action_retry)
+            )
+        }
+    }
+
     EffectHandler(
         effect = viewModel.effect,
-        snackbarHostState = snackbarHostState,
         onMovieClicked = onMovieClicked
     )
 }
@@ -91,23 +101,13 @@ fun SharedTransitionScope.MovieCatalogScreen(
 @Composable
 private fun EffectHandler(
     effect: SharedFlow<MovieCatalogContracts.UiEffect>,
-    snackbarHostState: SnackbarHostState,
     onMovieClicked: (MovieDetailsRoute) -> Unit
 ) {
-    val context = LocalContext.current
-
     LaunchedEffect(Unit) {
         effect.collect { uiEffect ->
             when (uiEffect) {
                 is MovieCatalogContracts.UiEffect.NavigateToMovieDetails -> {
                     onMovieClicked(uiEffect.route)
-                }
-
-                is MovieCatalogContracts.UiEffect.ShowError -> {
-                    snackbarHostState.showSnackbar(
-                        message = context.getString(R.string.error_generic_message),
-                        actionLabel = context.getString(R.string.action_retry)
-                    )
                 }
             }
         }

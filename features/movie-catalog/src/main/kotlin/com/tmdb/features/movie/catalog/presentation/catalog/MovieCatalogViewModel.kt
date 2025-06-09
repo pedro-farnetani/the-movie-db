@@ -55,8 +55,7 @@ class MovieCatalogViewModel @Inject constructor(
                     }
                 },
                 onFailure = {
-                    _uiState.update { it.copy(isLoading = false) }
-                    _effect.emit(UiEffect.ShowError)
+                    _uiState.update { it.copy(isLoading = false, isError = true) }
                 }
             )
         }

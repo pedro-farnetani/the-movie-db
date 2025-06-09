@@ -44,7 +44,13 @@ internal fun MovieDataModel.toDomainModel(): MovieDomainModel {
     )
 }
 
-internal fun MovieDomainModel.Companion.mock(id: Long = 0) = MovieDomainModel(
+fun MovieDomainModel.Companion.mockList(size: Int = 10): List<MovieDomainModel> {
+    return List(size) { index ->
+        MovieDomainModel.mock(id = index.toLong())
+    }
+}
+
+fun MovieDomainModel.Companion.mock(id: Long = 0) = MovieDomainModel(
     id = id,
     adult = false,
     backdropPath = "",

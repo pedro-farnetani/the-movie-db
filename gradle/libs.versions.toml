@@ -19,6 +19,7 @@ mockk = "1.13.13"
 moshi = "1.15.1"
 okHttp = "4.12.0"
 retrofit = "2.11.0"
+turbine = "1.2.0"
 
 [libraries]
 androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activityCompose" }
@@ -49,6 +50,7 @@ retrofit-core = { group = "com.squareup.retrofit2", name = "retrofit", version.r
 test-junit = { group = "junit", name = "junit", version.ref = "junit" }
 test-kotlinx-coroutines = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinxCoroutinesTest" }
 test-mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
+test-turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

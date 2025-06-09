@@ -1,14 +1,14 @@
 package com.tmdb.features.movie.catalog.presentation.catalog
 
 import com.tmdb.core.navigation.routes.MovieDetailsRoute
-import com.tmdb.core.navigation.routes.TheMovieDBRoute
 import com.tmdb.features.movie.catalog.models.MovieUiModel
 
 object MovieCatalogContracts {
 
     data class UiState(
         val isLoading: Boolean = false,
-        val movies: List<MovieUiModel> = emptyList()
+        val movies: List<MovieUiModel> = emptyList(),
+        val isError: Boolean = false
     )
 
     sealed interface UiEvent {
@@ -18,6 +18,5 @@ object MovieCatalogContracts {
 
     sealed interface UiEffect {
         data class NavigateToMovieDetails(val route: MovieDetailsRoute) : UiEffect
-        data object ShowError : UiEffect
     }
 }
