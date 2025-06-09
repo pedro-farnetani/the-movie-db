@@ -1,6 +1,7 @@
 package com.tmdb.features.movie.catalog.models
 
 import com.tmdb.core.domain.movie.model.MovieDomainModel
+import java.math.BigDecimal
 
 internal data class MovieUiModel(
     val id: Long,
@@ -15,33 +16,14 @@ internal data class MovieUiModel(
     val releaseDate: String,
     val title: String,
     val video: Boolean,
-    val voteAverage: Float,
+    val voteAverage: BigDecimal,
     val voteCount: Int
 ) {
     companion object
 }
 
-internal fun List<MovieDomainModel>.toUiModelList(): List<MovieUiModel> {
-    return map { it.toUiModel() }
-}
-
-internal fun MovieDomainModel.toUiModel(): MovieUiModel {
-    return MovieUiModel(
-        id = id,
-        adult = adult,
-        backdropPath = backdropPath,
-        genreIds = genreIds,
-        originalLanguage = originalLanguage,
-        originalTitle = originalTitle,
-        overview = overview,
-        popularity = popularity,
-        posterPath = posterPath,
-        releaseDate = releaseDate,
-        title = title,
-        video = video,
-        voteAverage = voteAverage,
-        voteCount = voteCount
-    )
+internal fun MovieUiModel.Companion.mockList(size: Int = 10): List<MovieUiModel> {
+    return List(size) { index -> mock(id = index.toLong()) }
 }
 
 internal fun MovieUiModel.Companion.mock(id: Long = 0) = MovieUiModel(
@@ -57,6 +39,6 @@ internal fun MovieUiModel.Companion.mock(id: Long = 0) = MovieUiModel(
     releaseDate = "",
     title = "Title $id",
     video = false,
-    voteAverage = 0f,
+    voteAverage = BigDecimal(0.0),
     voteCount = 0
 )

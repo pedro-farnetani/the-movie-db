@@ -4,10 +4,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.tmdb.core.domain.movie.GetPopularMoviesUseCase
 import com.tmdb.features.movie.catalog.models.MovieUiModel
-import com.tmdb.features.movie.catalog.models.toUiModelList
 import com.tmdb.features.movie.catalog.presentation.catalog.MovieCatalogContracts.UiEffect
 import com.tmdb.features.movie.catalog.presentation.catalog.MovieCatalogContracts.UiEvent
 import com.tmdb.features.movie.catalog.presentation.catalog.MovieCatalogContracts.UiState
+import com.tmdb.features.movie.catalog.presentation.mappers.MovieItemMapper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -19,7 +19,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 internal class MovieCatalogViewModel @Inject constructor(
-    private val getPopularMoviesUseCase: GetPopularMoviesUseCase
+    private val getPopularMoviesUseCase: GetPopularMoviesUseCase,
+    private val movieItemMapper: MovieItemMapper
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(UiState(isLoading = true))
@@ -46,7 +47,9 @@ internal class MovieCatalogViewModel @Inject constructor(
                     _uiState.update {
                         it.copy(
                             isLoading = false,
-                            movies = movies.toUiModelList()
+                            movies = movies.map { movieDomainData ->
+                                movieItemMapper.mapToUiModel(movieDomainData)
+                            }
                         )
                     }
                 },
