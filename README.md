@@ -17,6 +17,9 @@ O objetivo do projeto é fornecer uma experiência interativa para explorar e vi
 - `core`: Componentes reutilizáveis e funcionalidades centrais.
 - `designsystem`: Componentes de UI compartilhados.
 
+## Video
+[Screen_recording_20250609_173555.webm](https://github.com/user-attachments/assets/2d5c9516-f229-49fc-b1be-8a1c266f5f4f)
+
 ## Como Executar
 
 1. Certifique-se de ter o **JDK** instalado.
