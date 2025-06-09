@@ -7,7 +7,7 @@ import java.math.RoundingMode
 import java.util.Locale
 import javax.inject.Inject
 
-internal class MovieItemMapper @Inject constructor() {
+class MovieItemMapper @Inject constructor() {
 
     fun mapToUiModel(domainModel: MovieDomainModel) = with(domainModel) {
         MovieUiModel(

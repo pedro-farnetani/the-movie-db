@@ -1,6 +1,13 @@
 package com.tmdb.features.movie.catalog.presentation.components
 
+import android.annotation.SuppressLint
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionScope
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -27,20 +34,23 @@ import com.tmdb.features.movie.catalog.R
 import com.tmdb.features.movie.catalog.models.MovieUiModel
 import com.tmdb.features.movie.catalog.models.mock
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
-internal fun MovieItemList(
+internal fun SharedTransitionScope.MovieItemList(
     movie: MovieUiModel,
+    animatedVisibilityScope: AnimatedVisibilityScope,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Card(
+        modifier = modifier.clickable(onClick = onClick),
         colors = CardDefaults.cardColors().copy(
             containerColor = MaterialTheme.colorScheme.primaryContainer
         ),
         elevation = CardDefaults.elevatedCardElevation(2.dp)
     ) {
         Row(
-            modifier = modifier
+            modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp),
             horizontalArrangement = Arrangement.spacedBy(16.dp)
@@ -48,7 +58,14 @@ internal fun MovieItemList(
             AsyncImage(
                 modifier = Modifier
                     .size(64.dp)
-                    .clip(shape = RoundedCornerShape(32.dp)),
+                    .clip(shape = RoundedCornerShape(32.dp))
+                    .sharedElement(
+                        sharedContentState = rememberSharedContentState(key = movie.posterPath),
+                        animatedVisibilityScope = animatedVisibilityScope,
+                        boundsTransform = { _, _ ->
+                            tween(durationMillis = 1000)
+                        }
+                    ),
                 model = movie.posterPath,
                 contentScale = ContentScale.Crop,
                 contentDescription = ""
@@ -56,6 +73,13 @@ internal fun MovieItemList(
 
             Column {
                 Text(
+                    modifier = Modifier.sharedElement(
+                        sharedContentState = rememberSharedContentState(key = movie.title),
+                        animatedVisibilityScope = animatedVisibilityScope,
+                        boundsTransform = { _, _ ->
+                            tween(durationMillis = 1000)
+                        }
+                    ),
                     text = movie.title,
                     style = MaterialTheme.typography.bodyLarge.copy(
                         fontWeight = FontWeight.Bold
@@ -75,7 +99,7 @@ internal fun MovieItemList(
                     )
 
                     Image(
-                        painter = painterResource(id = R.drawable.baseline_star_16),
+                        painter = painterResource(id = R.drawable.ic_star_16),
                         contentDescription = ""
                     )
                 }
@@ -84,11 +108,18 @@ internal fun MovieItemList(
     }
 }
 
+@SuppressLint("UnusedSharedTransitionModifierParameter")
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Preview
 @Composable
 private fun MovieItemListPreview() {
-    MovieItemList(
-        movie = MovieUiModel.mock(),
-        onClick = {}
-    )
+    SharedTransitionScope {
+        AnimatedVisibility(visible = true) {
+            MovieItemList(
+                movie = MovieUiModel.mock(),
+                animatedVisibilityScope = this,
+                onClick = {}
+            )
+        }
+    }
 }

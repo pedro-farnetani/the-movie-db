@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="movie_catalog_title">Movie Catalog</string>
+    <string name="error_generic_message">Something went wrong</string>
+    <string name="action_retry">Try again</string>
 </resources>

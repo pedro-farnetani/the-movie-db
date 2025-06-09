@@ -1,9 +1,8 @@
 package com.tmdb.features.movie.catalog.models
 
-import com.tmdb.core.domain.movie.model.MovieDomainModel
 import java.math.BigDecimal
 
-internal data class MovieUiModel(
+data class MovieUiModel(
     val id: Long,
     val adult: Boolean,
     val backdropPath: String,

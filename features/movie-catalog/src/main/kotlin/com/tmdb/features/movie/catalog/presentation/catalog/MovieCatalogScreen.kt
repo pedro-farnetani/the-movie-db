@@ -1,5 +1,10 @@
 package com.tmdb.features.movie.catalog.presentation.catalog
 
+import android.annotation.SuppressLint
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -12,26 +17,32 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.tmdb.core.navigation.routes.MovieDetailsRoute
 import com.tmdb.designsystem.components.LoadingScreen
 import com.tmdb.features.movie.catalog.R
 import com.tmdb.features.movie.catalog.models.MovieUiModel
 import com.tmdb.features.movie.catalog.models.mockList
 import com.tmdb.features.movie.catalog.presentation.catalog.MovieCatalogContracts.UiEvent
 import com.tmdb.features.movie.catalog.presentation.components.MovieItemList
+import kotlinx.coroutines.flow.SharedFlow
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
 @Composable
-internal fun MovieCatalogScreen(
+fun SharedTransitionScope.MovieCatalogScreen(
+    animatedVisibilityScope: AnimatedVisibilityScope,
+    onMovieClicked: (MovieDetailsRoute) -> Unit,
     viewModel: MovieCatalogViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -61,6 +72,7 @@ internal fun MovieCatalogScreen(
                 MovieCatalogContent(
                     modifier = Modifier.padding(innerPadding),
                     movies = uiState.movies,
+                    animatedVisibilityScope = animatedVisibilityScope,
                     onMovieClicked = { movie ->
                         viewModel.sendEvent(UiEvent.OnMovieClicked(movie))
                     }
@@ -68,11 +80,45 @@ internal fun MovieCatalogScreen(
             }
         }
     )
+
+    EffectHandler(
+        effect = viewModel.effect,
+        snackbarHostState = snackbarHostState,
+        onMovieClicked = onMovieClicked
+    )
 }
 
 @Composable
-private fun MovieCatalogContent(
+private fun EffectHandler(
+    effect: SharedFlow<MovieCatalogContracts.UiEffect>,
+    snackbarHostState: SnackbarHostState,
+    onMovieClicked: (MovieDetailsRoute) -> Unit
+) {
+    val context = LocalContext.current
+
+    LaunchedEffect(Unit) {
+        effect.collect { uiEffect ->
+            when (uiEffect) {
+                is MovieCatalogContracts.UiEffect.NavigateToMovieDetails -> {
+                    onMovieClicked(uiEffect.route)
+                }
+
+                is MovieCatalogContracts.UiEffect.ShowError -> {
+                    snackbarHostState.showSnackbar(
+                        message = context.getString(R.string.error_generic_message),
+                        actionLabel = context.getString(R.string.action_retry)
+                    )
+                }
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalSharedTransitionApi::class)
+@Composable
+private fun SharedTransitionScope.MovieCatalogContent(
     movies: List<MovieUiModel>,
+    animatedVisibilityScope: AnimatedVisibilityScope,
     onMovieClicked: (MovieUiModel) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -85,17 +131,25 @@ private fun MovieCatalogContent(
             val movie = movies[index]
             MovieItemList(
                 movie = movie,
+                animatedVisibilityScope = animatedVisibilityScope,
                 onClick = { onMovieClicked(movie) }
             )
         }
     }
 }
 
+@SuppressLint("UnusedSharedTransitionModifierParameter")
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Preview
 @Composable
 private fun MovieCatalog() {
-    MovieCatalogContent(
-        movies = MovieUiModel.mockList(),
-        onMovieClicked = {}
-    )
+    SharedTransitionScope {
+        AnimatedVisibility(visible = true) {
+            MovieCatalogContent(
+                movies = MovieUiModel.mockList(),
+                animatedVisibilityScope = this,
+                onMovieClicked = {}
+            )
+        }
+    }
 }

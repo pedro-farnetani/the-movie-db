@@ -3,6 +3,7 @@ package com.tmdb.features.movie.catalog.presentation.catalog
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.tmdb.core.domain.movie.GetPopularMoviesUseCase
+import com.tmdb.core.navigation.routes.MovieDetailsRoute
 import com.tmdb.features.movie.catalog.models.MovieUiModel
 import com.tmdb.features.movie.catalog.presentation.catalog.MovieCatalogContracts.UiEffect
 import com.tmdb.features.movie.catalog.presentation.catalog.MovieCatalogContracts.UiEvent
@@ -18,7 +19,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-internal class MovieCatalogViewModel @Inject constructor(
+class MovieCatalogViewModel @Inject constructor(
     private val getPopularMoviesUseCase: GetPopularMoviesUseCase,
     private val movieItemMapper: MovieItemMapper
 ) : ViewModel() {
@@ -26,8 +27,8 @@ internal class MovieCatalogViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(UiState(isLoading = true))
     val uiState = _uiState.asStateFlow()
 
-    private val _uiEffect = MutableSharedFlow<UiEffect>()
-    val uiEffect = _uiEffect.asSharedFlow()
+    private val _effect = MutableSharedFlow<UiEffect>()
+    val effect = _effect.asSharedFlow()
 
     init {
         fetchPopularMovies()
@@ -55,7 +56,7 @@ internal class MovieCatalogViewModel @Inject constructor(
                 },
                 onFailure = {
                     _uiState.update { it.copy(isLoading = false) }
-                    _uiEffect.emit(UiEffect.ShowError)
+                    _effect.emit(UiEffect.ShowError)
                 }
             )
         }
@@ -63,7 +64,12 @@ internal class MovieCatalogViewModel @Inject constructor(
 
     private fun onMovieClicked(movie: MovieUiModel) {
         viewModelScope.launch {
-            _uiEffect.emit(UiEffect.NavigateToMovieDetails(movie))
+            val route = MovieDetailsRoute(
+                posterPath = movie.posterPath,
+                title = movie.title,
+                overview = movie.overview
+            )
+            _effect.emit(UiEffect.NavigateToMovieDetails(route))
         }
     }
 

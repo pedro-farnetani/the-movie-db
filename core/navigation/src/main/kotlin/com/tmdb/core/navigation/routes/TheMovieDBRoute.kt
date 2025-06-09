@@ -7,3 +7,10 @@ sealed interface TheMovieDBRoute
 
 @Serializable
 data object MovieCatalogRoute : TheMovieDBRoute
+
+@Serializable
+data class MovieDetailsRoute(
+    val posterPath: String,
+    val title: String,
+    val overview: String
+) : TheMovieDBRoute
