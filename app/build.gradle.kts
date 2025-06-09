@@ -45,6 +45,10 @@ dependencies {
 
     // Core dependencies
     implementation(project(":core:designsystem"))
+    implementation(project(":core:navigation"))
+
+    // Feature dependencies
+    implementation(project(":features:movie-catalog"))
 
     // AndroidX dependencies
     implementation(libs.androidx.core.ktx)
@@ -57,6 +61,7 @@ dependencies {
     // Compose dependencies
     implementation(libs.androidx.activity.compose)
     implementation(platform(libs.androidx.compose.bom))
+    implementation(libs.androidx.navigation.compose)
 
     // Hilt dependencies
     implementation(libs.hilt.android)

@@ -2,10 +2,11 @@ plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.kotlinx.serialization)
 }
 
 android {
-    namespace = "com.tmdb.core.designsystem"
+    namespace = "com.tmdb.core.navigation"
     compileSdk = 35
 
     defaultConfig {
@@ -19,6 +20,7 @@ android {
     kotlinOptions {
         jvmTarget = JavaVersion.VERSION_17.toString()
     }
+
     buildFeatures {
         compose = true
     }
@@ -26,11 +28,11 @@ android {
 
 dependencies {
 
-    // AndroidX dependencies
-    implementation(libs.androidx.material3)
-    implementation(libs.androidx.ui.tooling.preview)
+    // KotlinX dependencies
+    implementation(libs.kotlinx.serialization)
 
     // Compose dependencies
     implementation(libs.androidx.activity.compose)
     implementation(platform(libs.androidx.compose.bom))
+    implementation(libs.androidx.compose.animation)
 }
